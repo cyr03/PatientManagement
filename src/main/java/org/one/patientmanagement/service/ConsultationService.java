@@ -1,6 +1,7 @@
 package org.one.patientmanagement.service;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.one.patientmanagement.domain.enums.ConsultationType;
 import org.one.patientmanagement.domain.models.Consultation;
 
@@ -22,5 +23,5 @@ public interface ConsultationService {
      * @return list of consultations
      * @throws IllegalArgumentException if both {@code patientId} and {@code doctorId} are {@code null}
      */
-    List<Consultation> getConsultations(long patientId, long doctorId, ConsultationType... types) throws IllegalArgumentException;
+    List<Consultation> getConsultations(long patientId, long doctorId, @Nonnull ConsultationType... types) throws IllegalArgumentException;
 }

@@ -15,6 +15,8 @@ public interface PatientManager {
     
     void remove(@Nonnull Patient patient);
     
+    Patient update(@Nonnull Patient patient);
+    
     List<Attachment> getAttachments(@Nonnull Patient patient);
     
     Optional<Vitals> getVitals(@Nonnull Patient patient);

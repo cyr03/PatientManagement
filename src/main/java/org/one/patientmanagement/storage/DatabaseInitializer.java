@@ -30,6 +30,7 @@ public class DatabaseInitializer {
         execute("""
             CREATE TABLE IF NOT EXISTS accounts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 role TEXT NOT NULL CHECK(role IN ('DOCTOR', 'PATIENT')),
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -41,7 +42,7 @@ public class DatabaseInitializer {
         execute("""
             CREATE TABLE IF NOT EXISTS patients (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                account_id INTEGER,
+                account_id INTEGER UNIQUE,
                 name TEXT NOT NULL,
                 sex TEXT,
                 birthday TEXT,
@@ -58,7 +59,7 @@ public class DatabaseInitializer {
         execute("""
             CREATE TABLE IF NOT EXISTS doctors (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                account_id INTEGER,
+                account_id INTEGER UNIQUE,
                 name TEXT NOT NULL,
                 FOREIGN KEY (account_id) REFERENCES accounts(id)
             );

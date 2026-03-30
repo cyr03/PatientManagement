@@ -9,14 +9,16 @@ public interface AccountManager {
     Account register(@Nonnull Account account);
 
     void delete(long id);
+    
+    Account update(@Nonnull Account account);
 
     Optional<Account> getById(long id);
 
     /**
      *
-     * @param patientId id of patient
+     * @param user phone number or email of patient
      * @param password hashed password
      * @return the account
      */
-    Account authenticate(long patientId, String password);
+    Account authenticate(@Nonnull String user, @Nonnull String password);
 }

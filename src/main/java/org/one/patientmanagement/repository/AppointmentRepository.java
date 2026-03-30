@@ -18,7 +18,7 @@ public interface AppointmentRepository extends Repository<Appointment> {
      * @return list of consultations
      * @throws IllegalArgumentException if both {@code patientId} and {@code doctorId} are {@code null}
      */
-    List<Appointment> findAll(long patientId, long doctorId, AppointmentStatus... status) throws IllegalArgumentException;
+    List<Appointment> findAll(long patientId, long doctorId, @Nonnull AppointmentStatus... status) throws IllegalArgumentException;
     
     List<Appointment> findByDoctor(long doctorId);
 

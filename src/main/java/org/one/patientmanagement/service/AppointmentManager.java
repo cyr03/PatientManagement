@@ -29,5 +29,5 @@ public interface AppointmentManager {
 
     void delete(long appointmentId);
 
-    boolean isDoctorAvailable(long doctorId, AppointmentBlock block);
+    boolean isDoctorAvailable(long doctorId, @Nonnull AppointmentBlock block);
 }
