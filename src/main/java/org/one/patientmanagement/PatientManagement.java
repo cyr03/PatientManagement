@@ -2,7 +2,6 @@ package org.one.patientmanagement;
 
 import com.google.inject.Guice;
 import java.awt.EventQueue;
-import java.sql.Connection;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -14,6 +13,7 @@ import org.one.patientmanagement.repository.RepositoryModule;
 import org.one.patientmanagement.service.ServiceModule;
 import org.one.patientmanagement.storage.DatabaseInitializer;
 import org.one.patientmanagement.storage.DatabaseModule;
+import org.one.patientmanagement.ui.MainView;
 import org.one.patientmanagement.ui.PresentationModule;
 
 public class PatientManagement {
@@ -23,15 +23,15 @@ public class PatientManagement {
             try {
                 System.out.println("Hello World!");
                 var injector = Guice.createInjector(
-                        new DatabaseModule(),
-                        new RepositoryModule(),
-                        new ServiceModule(),
-                        new PresentationModule()
+                        new DatabaseModule()
+//                        new RepositoryModule(),
+//                        new ServiceModule(),
+//                        new PresentationModule()
                 );
 
                 // TODO: exception handling for the storage
-                injector.getInstance(Connection.class);
                 injector.getInstance(DatabaseInitializer.class).init();
+                injector.getInstance(MainView.class).setVisible(true);
             } catch (Exception e) {
                 showErrorDialog(e);
             }
