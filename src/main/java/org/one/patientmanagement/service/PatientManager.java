@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.one.patientmanagement.domain.models.Attachment;
-import org.one.patientmanagement.domain.models.Doctor;
 import org.one.patientmanagement.domain.models.Patient;
 import org.one.patientmanagement.domain.models.Prescription;
 import org.one.patientmanagement.domain.models.Vitals;
@@ -28,9 +27,7 @@ public interface PatientManager {
     Optional<Patient> getByAccountId(long accountId);
 
     List<Patient> getPatients();
-    
-    List<Doctor> getDoctors(long patientId);
-    
+        
     Prescription recordPrescription(@Nonnull Prescription prescription);
     
     void removePrescription(@Nonnull Prescription prescription);
