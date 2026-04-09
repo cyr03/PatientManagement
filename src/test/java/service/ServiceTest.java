@@ -13,6 +13,7 @@ import org.one.patientmanagement.repository.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +82,7 @@ public class ServiceTest {
 
     static Prescription prescription(long id) {
         return new Prescription(id, "Paracetamol", "500mg", "Twice daily",
-                "3 days", "After meals", 2L, 3L, LocalDateTime.now());
+                Period.ofDays(3), "After meals", 2L, 3L, LocalDateTime.now());
     }
 
     static Vitals vitals(long patientId) {

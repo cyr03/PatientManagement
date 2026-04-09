@@ -40,7 +40,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
             stmt.setString(1, prescription.medicationName());
             stmt.setString(2, prescription.dosage());
             stmt.setString(3, prescription.frequency());
-            stmt.setString(4, prescription.duration());
+            stmt.setString(4, prescription.duration().toString());
             stmt.setString(5, prescription.instructions());
             stmt.setLong(6, prescription.doctorId());
             stmt.setLong(7, prescription.patientId());
@@ -141,7 +141,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
                 rs.getString("medication_name"),
                 rs.getString("dosage"),
                 rs.getString("frequency"),
-                rs.getString("duration"),
+                java.time.Period.parse(rs.getString("duration")),
                 rs.getString("instructions"),
                 rs.getLong("doctor_id"),
                 rs.getLong("patient_id"),

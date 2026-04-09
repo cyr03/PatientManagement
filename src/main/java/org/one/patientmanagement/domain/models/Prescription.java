@@ -1,6 +1,7 @@
 package org.one.patientmanagement.domain.models;
 
 import java.time.LocalDateTime;
+import java.time.Period;
 
 /**
  * Represents the prescription of a patient.
@@ -10,12 +11,13 @@ public record Prescription(
         String medicationName,
         String dosage,
         String frequency,
-        String duration,
+        Period duration,
         String instructions,
         long doctorId,
         long patientId,
         LocalDateTime createdAt
-) {
+        ) {
+
     public Prescription {
         if (medicationName == null || medicationName.isBlank()) {
             throw new IllegalArgumentException("medicationName is required");
@@ -35,5 +37,12 @@ public record Prescription(
         if (createdAt == null) {
             throw new IllegalArgumentException("createdAt is required");
         }
+    }
+
+    public boolean isActive() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endAt = createdAt.plus(duration);
+
+        return !now.isBefore(createdAt) && !now.isAfter(endAt);
     }
 }

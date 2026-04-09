@@ -8,6 +8,7 @@ import org.one.patientmanagement.domain.models.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,7 +80,7 @@ public class RepositoryContractTest {
 
     protected static Prescription makePrescription(long doctorId, long patientId) {
         return new Prescription(0L, "Paracetamol", "500mg", "Twice daily",
-                "3 days", "After meals", doctorId, patientId, LocalDateTime.now());
+                Period.ofDays(3), "After meals", doctorId, patientId, LocalDateTime.now());
     }
 
     protected static Vitals makeVitals(long patientId) {
