@@ -16,6 +16,9 @@ import org.one.patientmanagement.storage.DatabaseModule;
 import org.one.patientmanagement.ui.MainView;
 import org.one.patientmanagement.ui.PresentationModule;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.Font;
+import javax.swing.UIManager;
+import org.one.patientmanagement.ui.core.Theme;
 
 public class PatientManagement {
 
@@ -24,6 +27,8 @@ public class PatientManagement {
             try {
                 System.out.println("Hello World!");
                 
+                Theme.setup();
+                FlatLightLaf.registerCustomDefaultsSource("themes");
                 FlatLightLaf.setup();
                 
                 var injector = Guice.createInjector(
@@ -42,7 +47,7 @@ public class PatientManagement {
         });
     }
 
-    private static void showErrorDialog(Exception e) {
+    public static void showErrorDialog(Exception e) {
         JLabel label = new JLabel("Error details:");
         label.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
 
