@@ -41,7 +41,13 @@ public class PatientManagement {
 
                 // TODO: exception handling for the storage
                 injector.getInstance(DatabaseInitializer.class).init();
-                injector.getInstance(MainView.class).setVisible(true);
+                
+                if (args.length > 0)
+                    switch(args[0]) {
+                        case "doctor" -> new DoctorAppContext(injector).start();
+                        case "patient", "default" -> new PatientAppContext(injector).start();
+                    }
+                else new PatientAppContext(injector).start();
             } catch (Exception e) {
                 e.printStackTrace();
                 showExceptionDialog(e, "Failed to start", JOptionPane.ERROR_MESSAGE);
