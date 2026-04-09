@@ -1,5 +1,6 @@
 package org.one.patientmanagement.repository.impl;
 
+import com.google.inject.Inject;
 import org.one.patientmanagement.domain.enums.ConsultationType;
 import org.one.patientmanagement.domain.models.Consultation;
 import org.one.patientmanagement.repository.ConsultationRepository;
@@ -7,11 +8,15 @@ import org.one.patientmanagement.repository.ConsultationRepository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 
 public class ConsultationRepositoryImpl implements ConsultationRepository {
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:sqlite:clinic.db");
+    private final DataSource dataSource;
+
+    @Inject
+    public ConsultationRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -23,8 +28,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             VALUES (?, ?, ?, ?, ?)
         """;
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, consultation.type().name());
             stmt.setString(2, consultation.title());
@@ -56,7 +60,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             throw new RuntimeException(e);
         }
     }
-    
+
     @Override
     public void update(Consultation consultation) {
         String sql = """
@@ -65,8 +69,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             WHERE id = ?
         """;
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, consultation.type().name());
             stmt.setString(2, consultation.title());
@@ -86,8 +89,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
     public void delete(long id) {
         String sql = "DELETE FROM consultations WHERE id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
             stmt.executeUpdate();
@@ -122,7 +124,9 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             sql.append(" AND type IN (");
             for (int i = 0; i < types.length; i++) {
                 sql.append("?");
-                if (i < types.length - 1) sql.append(",");
+                if (i < types.length - 1) {
+                    sql.append(",");
+                }
                 params.add(types[i].name());
             }
             sql.append(")");
@@ -130,8 +134,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
 
         List<Consultation> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 stmt.setObject(i + 1, params.get(i));

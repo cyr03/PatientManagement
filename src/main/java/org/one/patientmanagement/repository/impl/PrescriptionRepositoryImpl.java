@@ -1,5 +1,6 @@
 package org.one.patientmanagement.repository.impl;
 
+import com.google.inject.Inject;
 import org.one.patientmanagement.domain.models.Prescription;
 import org.one.patientmanagement.repository.PrescriptionRepository;
 
@@ -7,11 +8,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.sql.DataSource;
 
 public class PrescriptionRepositoryImpl implements PrescriptionRepository {
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:sqlite:clinic.db");
+    private final DataSource dataSource;
+
+    @Inject
+    public PrescriptionRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -29,7 +34,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, prescription.medicationName());
@@ -71,7 +76,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
     public void delete(long id) {
         String sql = "DELETE FROM prescriptions WHERE id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -91,7 +96,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
             LIMIT 1
         """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, patientId);
@@ -113,7 +118,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
         String sql = "SELECT * FROM prescriptions WHERE patient_id = ?";
         List<Prescription> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, patientId);

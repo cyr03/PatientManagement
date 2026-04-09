@@ -100,17 +100,10 @@ public class RepositoryContractTest {
 
         protected abstract PatientRepository repository();
 
-        private PatientRepository repo;
-
-        @BeforeEach
-        void setUp() {
-            repo = repository();
-        }
-
         @Test
         @DisplayName("save() persists a patient and returns it with a generated id")
         void saveReturnsPersistedPatientWithId() {
-            Patient saved = repo.save(makePatient(10L));
+            Patient saved = repository().save(makePatient(10L));
             assertThat(saved).isNotNull();
             assertThat(saved.id()).isPositive();
             assertThat(saved.name()).isEqualTo("Test Patient");
@@ -119,8 +112,8 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findById() returns the saved patient")
         void findByIdReturnsPatient() {
-            Patient saved = repo.save(makePatient(11L));
-            Optional<Patient> found = repo.findById(saved.id());
+            Patient saved = repository().save(makePatient(11L));
+            Optional<Patient> found = repository().findById(saved.id());
             assertThat(found).isPresent();
             assertThat(found.get().id()).isEqualTo(saved.id());
         }
@@ -128,28 +121,28 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findById() returns empty for non-existent id")
         void findByIdReturnsEmptyForUnknownId() {
-            Optional<Patient> found = repo.findById(Long.MAX_VALUE);
+            Optional<Patient> found = repository().findById(Long.MAX_VALUE);
             assertThat(found).isEmpty();
         }
 
         @Test
         @DisplayName("findAll() returns all saved patients")
         void findAllReturnsSavedPatients() {
-            repo.save(makePatient(20L));
-            repo.save(makePatient(21L));
-            List<Patient> all = repo.findAll();
+            repository().save(makePatient(20L));
+            repository().save(makePatient(21L));
+            List<Patient> all = repository().findAll();
             assertThat(all).hasSizeGreaterThanOrEqualTo(2);
         }
 
         @Test
         @DisplayName("update() persists changed fields")
         void updatePersistsChangedFields() {
-            Patient saved = repo.save(makePatient(30L));
+            Patient saved = repository().save(makePatient(30L));
             Patient updated = new Patient(saved.id(), saved.accountId(),
                     "Updated Name", saved.sex(), saved.birthday(), saved.bloodType(),
                     saved.contactNumber(), saved.email(), "New Address");
-            repo.update(updated);
-            Optional<Patient> fetched = repo.findById(saved.id());
+            repository().update(updated);
+            Optional<Patient> fetched = repository().findById(saved.id());
             assertThat(fetched).isPresent();
             assertThat(fetched.get().name()).isEqualTo("Updated Name");
         }
@@ -157,9 +150,9 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("delete() removes the patient from the store")
         void deleteRemovesPatient() {
-            Patient saved = repo.save(makePatient(40L));
-            repo.delete(saved.id());
-            Optional<Patient> found = repo.findById(saved.id());
+            Patient saved = repository().save(makePatient(40L));
+            repository().delete(saved.id());
+            Optional<Patient> found = repository().findById(saved.id());
             assertThat(found).isEmpty();
         }
     }
@@ -183,15 +176,15 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("save() returns account with generated id")
         void saveReturnsAccountWithId() {
-            Account saved = repo.save(makeAccount("09181234567"));
+            Account saved = repository().save(makeAccount("09181234567"));
             assertThat(saved.id()).isPositive();
         }
 
         @Test
         @DisplayName("findById() returns saved account")
         void findByIdReturnsAccount() {
-            Account saved = repo.save(makeAccount("test@mail.com"));
-            Optional<Account> found = repo.findById(saved.id());
+            Account saved = repository().save(makeAccount("test@mail.com"));
+            Optional<Account> found = repository().findById(saved.id());
             assertThat(found).isPresent();
             assertThat(found.get().user()).isEqualTo("test@mail.com");
         }
@@ -199,15 +192,15 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findById() returns empty when id does not exist")
         void findByIdReturnsEmptyWhenNotFound() {
-            assertThat(repo.findById(Long.MAX_VALUE)).isEmpty();
+            assertThat(repository().findById(Long.MAX_VALUE)).isEmpty();
         }
 
         @Test
         @DisplayName("delete() removes account from store")
         void deleteRemovesAccount() {
-            Account saved = repo.save(makeAccount("todelete@mail.com"));
-            repo.delete(saved.id());
-            assertThat(repo.findById(saved.id())).isEmpty();
+            Account saved = repository().save(makeAccount("todelete@mail.com"));
+            repository().delete(saved.id());
+            assertThat(repository().findById(saved.id())).isEmpty();
         }
     }
 
@@ -287,52 +280,45 @@ public class RepositoryContractTest {
 
         protected abstract ConsultationRepository repository();
 
-        private ConsultationRepository repo;
-
-        @BeforeEach
-        void setUp() {
-            repo = repository();
-        }
-
         @Test
         @DisplayName("save() persists consultation with generated id")
         void saveReturnsSavedConsultation() {
-            Consultation saved = repo.save(makeConsultation(1L, 2L));
+            Consultation saved = repository().save(makeConsultation(1L, 2L));
             assertThat(saved.id()).isPositive();
         }
 
         @Test
         @DisplayName("findAll(patientId, doctorId, types) returns consultations for patient")
         void findAllByPatientReturnsMachingConsultations() {
-            repo.save(makeConsultation(1L, 30L));
-            repo.save(makeConsultation(1L, 31L)); // different patient
-            List<Consultation> result = repo.findAll(30L, 0L, ConsultationType.GENERAL);
+            repository().save(makeConsultation(1L, 30L));
+            repository().save(makeConsultation(1L, 31L)); // different patient
+            List<Consultation> result = repository().findAll(30L, 0L, ConsultationType.GENERAL);
             assertThat(result).allMatch(c -> c.patientId() == 30L);
         }
 
         @Test
         @DisplayName("findAll(patientId, doctorId, types) returns consultations for doctor")
         void findAllByDoctorReturnsMatchingConsultations() {
-            repo.save(makeConsultation(50L, 2L));
-            repo.save(makeConsultation(51L, 2L)); // different doctor
-            List<Consultation> result = repo.findAll(0L, 50L, ConsultationType.GENERAL);
+            repository().save(makeConsultation(50L, 2L));
+            repository().save(makeConsultation(51L, 2L)); // different doctor
+            List<Consultation> result = repository().findAll(0L, 50L, ConsultationType.GENERAL);
             assertThat(result).allMatch(c -> c.doctorId() == 50L);
         }
 
         @Test
         @DisplayName("findAll() throws IllegalArgumentException when both patientId and doctorId are 0")
         void findAllThrowsWhenBothIdsAreZero() {
-            assertThatThrownBy(() -> repo.findAll(0L, 0L, ConsultationType.GENERAL))
+            assertThatThrownBy(() -> repository().findAll(0L, 0L, ConsultationType.GENERAL))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("delete() removes the consultation")
         void deleteRemovesConsultation() {
-            Consultation saved = repo.save(makeConsultation(1L, 2L));
-            repo.delete(saved.id());
+            Consultation saved = repository().save(makeConsultation(1L, 2L));
+            repository().delete(saved.id());
             // After delete, a search by patientId should not contain the deleted record
-            List<Consultation> remaining = repo.findAll(2L, 0L, ConsultationType.GENERAL);
+            List<Consultation> remaining = repository().findAll(2L, 0L, ConsultationType.GENERAL);
             assertThat(remaining).extracting(Consultation::id).doesNotContain(saved.id());
         }
     }
@@ -346,17 +332,10 @@ public class RepositoryContractTest {
 
         protected abstract PrescriptionRepository repository();
 
-        private PrescriptionRepository repo;
-
-        @BeforeEach
-        void setUp() {
-            repo = repository();
-        }
-
         @Test
         @DisplayName("save() persists prescription with generated id")
         void saveReturnsSavedPrescription() {
-            Prescription saved = repo.save(makePrescription(1L, 2L));
+            Prescription saved = repository().save(makePrescription(1L, 2L));
             assertThat(saved.id()).isPositive();
             assertThat(saved.medicationName()).isEqualTo("Paracetamol");
         }
@@ -364,10 +343,10 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findAllByPatient() returns all prescriptions for a patient")
         void findAllByPatientReturnsCorrectRecords() {
-            repo.save(makePrescription(1L, 40L));
-            repo.save(makePrescription(1L, 40L)); // second prescription same patient
-            repo.save(makePrescription(1L, 41L)); // different patient
-            List<Prescription> result = repo.findAllByPatient(40L);
+            repository().save(makePrescription(1L, 40L));
+            repository().save(makePrescription(1L, 40L)); // second prescription same patient
+            repository().save(makePrescription(1L, 41L)); // different patient
+            List<Prescription> result = repository().findAllByPatient(40L);
             assertThat(result).hasSizeGreaterThanOrEqualTo(2);
             assertThat(result).allMatch(p -> p.patientId() == 40L);
         }
@@ -375,8 +354,8 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findByPatient() returns a prescription for a patient")
         void findByPatientReturnsPrescription() {
-            repo.save(makePrescription(1L, 50L));
-            Optional<Prescription> found = repo.findByPatient(50L);
+            repository().save(makePrescription(1L, 50L));
+            Optional<Prescription> found = repository().findByPatient(50L);
             assertThat(found).isPresent();
             assertThat(found.get().patientId()).isEqualTo(50L);
         }
@@ -384,16 +363,16 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findByPatient() returns empty when patient has no prescriptions")
         void findByPatientReturnsEmptyWhenNone() {
-            Optional<Prescription> found = repo.findByPatient(Long.MAX_VALUE);
+            Optional<Prescription> found = repository().findByPatient(Long.MAX_VALUE);
             assertThat(found).isEmpty();
         }
 
         @Test
         @DisplayName("delete() removes the prescription")
         void deleteRemovesPrescription() {
-            Prescription saved = repo.save(makePrescription(1L, 60L));
-            repo.delete(saved.id());
-            List<Prescription> remaining = repo.findAllByPatient(60L);
+            Prescription saved = repository().save(makePrescription(1L, 60L));
+            repository().delete(saved.id());
+            List<Prescription> remaining = repository().findAllByPatient(60L);
             assertThat(remaining).extracting(Prescription::id).doesNotContain(saved.id());
         }
     }
@@ -407,17 +386,10 @@ public class RepositoryContractTest {
 
         protected abstract VitalsRepository repository();
 
-        private VitalsRepository repo;
-
-        @BeforeEach
-        void setUp() {
-            repo = repository();
-        }
-
         @Test
         @DisplayName("save() persists vitals with generated id")
         void saveReturnsSavedVitals() {
-            Vitals saved = repo.save(makeVitals(2L));
+            Vitals saved = repository().save(makeVitals(2L));
             assertThat(saved.id()).isPositive();
             assertThat(saved.patientId()).isEqualTo(2L);
         }
@@ -425,8 +397,8 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findByPatient() returns the vitals for a patient")
         void findByPatientReturnsVitals() {
-            repo.save(makeVitals(70L));
-            Vitals found = repo.findByPatient(70L);
+            repository().save(makeVitals(70L));
+            Vitals found = repository().findByPatient(70L);
             assertThat(found).isNotNull();
             assertThat(found.patientId()).isEqualTo(70L);
         }
@@ -434,20 +406,20 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("update() persists changed vital values")
         void updatePersistsChangedVitals() {
-            Vitals saved = repo.save(makeVitals(80L));
+            Vitals saved = repository().save(makeVitals(80L));
             Vitals updated = new Vitals(saved.id(), 130, 85, 80,
                     37.0, 70.0, 170.0, 80L, LocalDateTime.now());
-            repo.update(updated);
-            Vitals fetched = repo.findByPatient(80L);
+            repository().update(updated);
+            Vitals fetched = repository().findByPatient(80L);
             assertThat(fetched.systolicBp()).isEqualTo(130);
         }
 
         @Test
         @DisplayName("delete() removes vitals")
         void deleteRemovesVitals() {
-            Vitals saved = repo.save(makeVitals(90L));
-            repo.delete(saved.id());
-            Vitals found = repo.findByPatient(90L);
+            Vitals saved = repository().save(makeVitals(90L));
+            repository().delete(saved.id());
+            Vitals found = repository().findByPatient(90L);
             assertThat(found).isNull();
         }
     }
@@ -461,17 +433,10 @@ public class RepositoryContractTest {
 
         protected abstract AttachmentRepository repository();
 
-        private AttachmentRepository repo;
-
-        @BeforeEach
-        void setUp() {
-            repo = repository();
-        }
-
         @Test
         @DisplayName("save() persists attachment with generated id")
         void saveReturnsSavedAttachment() {
-            Attachment saved = repo.save(makeAttachment(3L));
+            Attachment saved = repository().save(makeAttachment(3L));
             assertThat(saved.id()).isPositive();
             assertThat(saved.name()).isEqualTo("record.pdf");
         }
@@ -479,10 +444,10 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findAllByPatient() returns all attachments for a patient")
         void findAllByPatientReturnsCorrectRecords() {
-            repo.save(makeAttachment(100L));
-            repo.save(makeAttachment(100L));
-            repo.save(makeAttachment(101L));
-            List<Attachment> result = repo.findAllByPatient(100L);
+            repository().save(makeAttachment(100L));
+            repository().save(makeAttachment(100L));
+            repository().save(makeAttachment(101L));
+            List<Attachment> result = repository().findAllByPatient(100L);
             assertThat(result).hasSizeGreaterThanOrEqualTo(2);
             assertThat(result).allMatch(a -> a.patientId() != null && a.patientId() == 100L);
         }
@@ -490,23 +455,23 @@ public class RepositoryContractTest {
         @Test
         @DisplayName("findByPatient() returns an attachment for a patient")
         void findByPatientReturnsAttachment() {
-            repo.save(makeAttachment(110L));
-            Optional<Attachment> found = repo.findByPatient(110L);
+            repository().save(makeAttachment(110L));
+            Optional<Attachment> found = repository().findByPatient(110L);
             assertThat(found).isPresent();
         }
 
         @Test
         @DisplayName("findByPatient() returns empty when patient has no attachments")
         void findByPatientReturnsEmptyWhenNone() {
-            assertThat(repo.findByPatient(Long.MAX_VALUE)).isEmpty();
+            assertThat(repository().findByPatient(Long.MAX_VALUE)).isEmpty();
         }
 
         @Test
         @DisplayName("delete() removes the attachment")
         void deleteRemovesAttachment() {
-            Attachment saved = repo.save(makeAttachment(120L));
-            repo.delete(saved.id());
-            List<Attachment> remaining = repo.findAllByPatient(120L);
+            Attachment saved = repository().save(makeAttachment(120L));
+            repository().delete(saved.id());
+            List<Attachment> remaining = repository().findAllByPatient(120L);
             assertThat(remaining).extracting(Attachment::id).doesNotContain(saved.id());
         }
     }

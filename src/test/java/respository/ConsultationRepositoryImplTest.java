@@ -3,11 +3,10 @@ package respository;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.one.patientmanagement.repository.AppointmentRepository;
-import org.one.patientmanagement.repository.impl.AppointmentRepositoryImpl;
+import org.one.patientmanagement.repository.impl.ConsultationRepositoryImpl;
 import org.one.patientmanagement.storage.DatabaseInitializer;
 
-class AppointmentRespositoryImplTest extends RepositoryContractTest.AppointmentRepositoryContract {
+class ConsultationRepositoryImplTest extends RepositoryContractTest.ConsultationRepositoryContract {
 
     private DataSource dataSource;
 
@@ -19,7 +18,7 @@ class AppointmentRespositoryImplTest extends RepositoryContractTest.AppointmentR
     }
 
     @Override
-    protected AppointmentRepository repository() {
-        return new AppointmentRepositoryImpl(dataSource);
+    protected ConsultationRepositoryImpl repository() {
+        return new ConsultationRepositoryImpl(dataSource);
     }
 }

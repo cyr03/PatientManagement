@@ -1,14 +1,19 @@
 package org.one.patientmanagement.repository.impl;
 
+import com.google.inject.Inject;
 import org.one.patientmanagement.domain.models.Vitals;
 import org.one.patientmanagement.repository.VitalsRepository;
 
 import java.sql.*;
+import javax.sql.DataSource;
 
 public class VitalsRepositoryImpl implements VitalsRepository {
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:sqlite:clinic.db");
+    private final DataSource dataSource;
+
+    @Inject
+    public VitalsRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -26,7 +31,7 @@ public class VitalsRepositoryImpl implements VitalsRepository {
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setObject(1, vitals.systolicBp());
@@ -68,7 +73,7 @@ public class VitalsRepositoryImpl implements VitalsRepository {
     public void delete(long id) {
         String sql = "DELETE FROM vitals WHERE id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -88,7 +93,7 @@ public class VitalsRepositoryImpl implements VitalsRepository {
             LIMIT 1
         """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, patientId);

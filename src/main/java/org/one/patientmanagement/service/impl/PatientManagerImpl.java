@@ -4,7 +4,6 @@ import org.one.patientmanagement.repository.AttachmentRepository;
 import org.one.patientmanagement.repository.VitalsRepository;
 import org.one.patientmanagement.repository.PrescriptionRepository;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ public class PatientManagerImpl implements PatientManager {
     private final VitalsRepository vitalsRepository;
     private final PrescriptionRepository prescriptionRepository;
 
-
     public PatientManagerImpl(
             PatientRepository patientRepository,
             AttachmentRepository attachmentRepository,
@@ -33,10 +31,10 @@ public class PatientManagerImpl implements PatientManager {
     ) {
         this.patientRepository = patientRepository;
         this.attachmentRepository = attachmentRepository;
-		this.vitalsRepository = vitalsRepository;
-		this.prescriptionRepository = prescriptionRepository;
+        this.vitalsRepository = vitalsRepository;
+        this.prescriptionRepository = prescriptionRepository;
     }
-    
+
     @Override
     public Patient create(@Nonnull Patient patient) {
         return patientRepository.save(patient);
@@ -65,7 +63,7 @@ public class PatientManagerImpl implements PatientManager {
 
     @Override
     public Optional<Patient> getByAccountId(long accountId) {
-    	return patientRepository.findByAccountId(accountId);
+        return patientRepository.findByAccountId(accountId);
     }
 
     @Override
@@ -77,7 +75,7 @@ public class PatientManagerImpl implements PatientManager {
     public Optional<Vitals> getVitals(@Nonnull Patient patient) {
         return Optional.of(vitalsRepository.findByPatient(patient.id()));
     }
-    
+
     @Override
     public List<Prescription> getPrescriptions(@Nonnull Patient patient) {
         return prescriptionRepository.findAllByPatient(patient.id());
@@ -92,7 +90,7 @@ public class PatientManagerImpl implements PatientManager {
     public void removePrescription(@Nonnull Prescription prescription) {
         prescriptionRepository.delete(prescription.id());
     }
-    
+
     @Override
     public Vitals setVitals(@Nonnull Vitals vitals) {
         return vitalsRepository.save(vitals);

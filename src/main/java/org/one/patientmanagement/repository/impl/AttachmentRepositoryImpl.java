@@ -1,5 +1,6 @@
 package org.one.patientmanagement.repository.impl;
 
+import com.google.inject.Inject;
 import org.one.patientmanagement.domain.models.Attachment;
 import org.one.patientmanagement.repository.AttachmentRepository;
 
@@ -7,11 +8,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.sql.DataSource;
 
 public class AttachmentRepositoryImpl implements AttachmentRepository {
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:sqlite:clinic.db");
+    private final DataSource dataSource;
+
+    @Inject
+    public AttachmentRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -21,7 +26,7 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
             VALUES (?, ?, ?)
         """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setBytes(1, attachment.data());
@@ -56,7 +61,7 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
     public void delete(long id) {
         String sql = "DELETE FROM attachments WHERE id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -71,7 +76,7 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
     public Optional<Attachment> findByPatient(long patientId) {
         String sql = "SELECT * FROM attachments WHERE patient_id = ? LIMIT 1";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, patientId);
@@ -93,7 +98,7 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
         String sql = "SELECT * FROM attachments WHERE patient_id = ?";
         List<Attachment> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, patientId);
