@@ -25,6 +25,7 @@ public class DatabaseInitializer {
             createConsultationsTable(stmt);
             createPrescriptionsTable(stmt);
             createVitalsTable(stmt);
+            createSchedulesTable(stmt);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -150,6 +151,22 @@ public class DatabaseInitializer {
                 patient_id INTEGER NOT NULL,
                 recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (patient_id) REFERENCES patients(id)
+            );
+        """);
+    }
+    
+    private void createSchedulesTable(Statement stmt) throws SQLException {
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS schedules (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                day TEXT NOT NULL CHECK(day IN (
+                    'MONDAY','TUESDAY','WEDNESDAY',
+                    'THURSDAY','FRIDAY','SATURDAY','SUNDAY'
+                )),
+                start TEXT NOT NULL,
+                end TEXT NOT NULL,
+                doctor_id INTEGER NOT NULL,
+                FOREIGN KEY (doctor_id) REFERENCES doctors(id)
             );
         """);
     }
