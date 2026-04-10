@@ -11,7 +11,7 @@ public interface AppointmentManager {
 
     Appointment schedule(@Nonnull Appointment appointment);
 
-    Optional<Appointment> getById(long id);
+//    Optional<Appointment> getById(long id);
 
     List<Appointment> getAppointments();
 
